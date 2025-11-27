@@ -44,12 +44,24 @@
     button:hover {
         background: #365cd4;
     }
+    #resetBtn {
+        background:#ff4d4d;
+        padding:10px 20px;
+        border:none;
+        color:white;
+        border-radius:6px;
+        font-size:16px;
+        cursor:pointer;
+        margin-bottom:20px;
+    }
 </style>
 </head>
 
 <body>
 
 <h1>카르텔 볼더링 대관파티 – 실시간 점수판</h1>
+
+<button id="resetBtn" onclick="resetScores()">전체 점수 초기화</button>
 
 <div id="teams"></div>
 
@@ -120,6 +132,18 @@ function addScore(team) {
         const current = snapshot.val() || 0;
         db.ref("scores/" + team).set(current + addPoint);
     });
+}
+
+function resetScores() {
+    const password = prompt("관리자 비밀번호를 입력하세요:");
+    if (password !== "cartel123") {
+        alert("비밀번호가 틀렸습니다.");
+        return;
+    }
+    teamList.forEach(team => {
+        db.ref("scores/" + team).set(0);
+    });
+    alert("모든 팀 점수가 초기화되었습니다!");
 }
 
 db.ref("scores").on("value", snap => {
