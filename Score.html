@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>볼더링 실시간 점수판</title>
+<style>
+    body { font-family: Arial; margin: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    .team-box { background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+</style>
+</head>
+
+<body>
+
+<h1>카르텔 볼더링 대관파티 – 실시간 점수판</h1>
+
+<div id="teams"></div>
+
+<hr>
+<h2>전체 팀 점수</h2>
+<table>
+    <thead>
+        <tr><th>팀</th><th>점수</th></tr>
+    </thead>
+    <tbody id="summary"></tbody>
+</table>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+/* 🔥 여기에 Firebase 설정 복붙 */
+const firebaseConfig = {
+    apiKey: "YOUR_KEY",
+    authDomain: "YOUR_DOMAIN",
+    databaseURL: "YOUR_DB",
+    projectId: "YOUR_ID",
+    storageBucket: "YOUR_BUCKET",
+    messagingSenderId: "YOUR_MSG",
+    appId: "YOUR_APP",
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* --- 레벨별 점수 --- */
+const scoreMap = {
+    "노랑": 5,
+    "초록": 10,
+    "하늘": 20,
+    "파랑": 40,
+    "보라": 60,
+    "회색": 90,
+    "갈색": 120,
+    "검은색": 200
+};
+
+const levels = Object.keys(scoreMap);
+
+/* --- 팀 UI 생성 --- */
+const teamList = ["A", "B", "C", "D", "E", "F"];
+const container = document.getElementById("teams");
+
+teamList.forEach(team => {
+    const box = document.createElement("div");
+    box.className = "team-box";
+    box.innerHTML = `
+        <h2>${team}팀</h2>
+        <label>레벨 선택: 
+            <select id="${team}_level">
+                ${levels.map(l => `<option value="${l}">${l}</option>`).join("")}
+            </select>
+        </label>
+        <button onclick="addScore('${team}')">저장</button>
+    `;
+    container.appendChild(box);
+});
+
+/* --- 점수 업데이트 (누적) --- */
+function addScore(team) {
+    const level = document.getElementById(team + "_level").value;
+    const addPoint = scoreMap[level];
+
+    db.ref("scores/" + team).once("value").then(snapshot => {
+        const current = snapshot.val() || 0;
+        db.ref("scores/" + team).set(current + addPoint);
+    });
+}
+
+/* --- 실시간 업데이트 --- */
+db.ref("scores").on("value", snap => {
+    const data = snap.val() || {};
+    const sumTbody = document.getElementById("summary");
+    sumTbody.innerHTML = "";
+
+    teamList.forEach(team => {
+        const score = data[team] || 0;
+        sumTbody.innerHTML += `<tr><td>${team}</td><td>${score}</td></tr>`;
+    });
+});
+</script>
+
+</body>
+</html>
