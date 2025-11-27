@@ -1,0 +1,199 @@
+body{
+  margin:0;
+  padding:0;
+  background:#f1e8d2;
+  font-family:'Noto Sans KR',sans-serif;
+  overflow-x:hidden;
+  position:relative;
+}
+
+body:before{
+  content:"";
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  pointer-events:none;
+  background-image:
+      radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+      radial-gradient(rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size:4px 4px, 7px 7px;
+  opacity:0.55;
+  z-index:0;
+}
+
+.logo{
+  width:160px;
+  display:block;
+  margin:40px auto 10px auto;
+  position:relative;
+  z-index:3;
+}
+
+h1{
+  text-align:center;
+  font-family:'Baloo 2';
+  font-size:32px;
+  color:#3c3024;
+  margin-bottom:40px;
+  position:relative;
+  z-index:3;
+}
+
+#resetBtn,#resetLogBtn{
+  position:fixed;
+  top:18px;
+  padding:12px 20px;
+  border:none;
+  border-radius:14px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  z-index:20;
+  box-shadow:0 4px 10px rgba(0,0,0,0.25);
+}
+
+#resetBtn{ right:25px; background:#ff4d4d; }
+#resetLogBtn{ right:150px; background:#ffa042; }
+
+.holder-bg{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  pointer-events:none;
+  z-index:1;
+}
+
+.holder{
+  position:absolute;
+  width:90px;
+  opacity:0.9;
+  filter:drop-shadow(2px 4px 4px rgba(0,0,0,0.3));
+}
+
+.team-box{
+  width:70%;
+  margin:30px auto;
+  background:#f8f1dc;
+  border-radius:26px;
+  padding:22px;
+  position:relative;
+  z-index:4;
+  box-shadow:
+     3px 5px 12px rgba(0,0,0,0.2),
+     inset 0 0 6px rgba(255,255,255,0.6);
+}
+
+.team-box h2{
+  margin:0 0 12px 0;
+  font-size:23px;
+  font-weight:700;
+  color:#3c3024;
+}
+
+select{
+  padding:8px 12px;
+  border-radius:10px;
+  border:1px solid #bbb09a;
+  font-size:16px;
+}
+
+button.add-btn{
+  background:#4b7bff;
+  font-size:15px;
+  border:none;
+  border-radius:10px;
+  padding:10px 14px;
+  color:white;
+  cursor:pointer;
+  margin-left:6px;
+  box-shadow:0 3px 6px rgba(0,0,0,0.25);
+}
+
+button.minus-btn{
+  background:#ff6b6b;
+  font-size:15px;
+  border:none;
+  border-radius:10px;
+  padding:10px 14px;
+  color:white;
+  cursor:pointer;
+  margin-left:6px;
+  box-shadow:0 3px 6px rgba(0,0,0,0.25);
+}
+
+.score-table{
+  width:70%;
+  margin:60px auto;
+  background:#f8f1dc;
+  border-radius:26px;
+  box-shadow:
+     3px 5px 12px rgba(0,0,0,0.2),
+     inset 0 0 6px rgba(255,255,255,0.6);
+  overflow:hidden;
+}
+
+.score-table th, .score-table td{
+  padding:16px;
+  font-size:18px;
+  text-align:center;
+  border-bottom:1px solid #e8ddc1;
+}
+
+.score-table th{
+  background:#e9dcbe;
+  font-size:20px;
+  color:#3c3024;
+}
+
+.log-toggle{
+  position:fixed;
+  bottom:25px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:12px 20px;
+  background:#ffa042;
+  border-radius:40px;
+  cursor:pointer;
+  font-weight:bold;
+  box-shadow:0 3px 8px rgba(0,0,0,0.25);
+  z-index:30;
+}
+
+.log-panel{
+  position:fixed;
+  bottom:0; left:0;
+  width:100%;
+  height:55%;
+  background:#f8e7c0;
+  border-radius:26px 26px 0 0;
+  transform:translateY(100%);
+  transition:0.45s;
+  padding:25px;
+  overflow-y:auto;
+  box-shadow:0 -4px 12px rgba(0,0,0,0.25);
+  z-index:50;
+}
+
+.log-panel.open{ transform:translateY(0); }
+
+.log-close{
+  position:absolute;
+  right:20px;
+  top:18px;
+  background:#ff6b6b;
+  padding:6px 14px;
+  border:none;
+  border-radius:10px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.log-item{
+  background:white;
+  padding:14px;
+  border-radius:14px;
+  margin:12px 0;
+  box-shadow:2px 4px 8px rgba(0,0,0,0.2);
+  font-size:15px;
+}
