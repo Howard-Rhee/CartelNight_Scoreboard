@@ -3,102 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <title>카르텔 볼더링 대관파티 – 실시간 점수판</title>
-<style>
-    body { 
-        font-family: 'Noto Sans KR', sans-serif; 
-        margin: 20px; 
-        background: #eef4ff;
-    }
-    h1 {
-        text-align: center;
-        margin-bottom: 20px;
-        font-family: 'Baloo 2', cursive;
-    }
-    .logo {
-        display:block;
-        margin:0 auto 20px auto;
-        width:180px;
-    }
-    table { 
-        width: 100%; 
-        border-collapse: collapse; 
-        margin-bottom: 20px; 
-    }
-    th, td { 
-        border: 1px solid #ccc; 
-        padding: 10px; 
-        text-align: center; 
-        background: white;
-    }
-    .team-box { 
-        background: #ffffff; 
-        padding: 15px; 
-        border-radius: 12px; 
-        margin-bottom: 20px; 
-        border: 1px solid #ddd;
-        box-shadow: 0 3px 6px rgba(0,0,0,0.08);
-    }
-    button {
-        margin-left: 10px;
-        padding: 6px 12px;
-        border: none;
-        background: #4b7bff;
-        color: white;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-    button:hover {
-        background: #365cd4;
-    }
-    .minus {
-        background: #ff6b6b;
-    }
-    .minus:hover {
-        background: #d64545;
-    }
-    #resetBtn {
-        background:#ff4d4d;
-        padding:10px 20px;
-        border:none;
-        color:white;
-        border-radius:6px;
-        font-size:16px;
-        cursor:pointer;
-        margin-bottom:20px;
-        display:block;
-        margin-left:auto;
-    }
-</style>
-
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+body{
+  font-family:'Noto Sans KR',sans-serif;
+  background:#f2f5fb;
+  margin:0;
+  padding:20px;
+  overflow-x:hidden;
+}
+.logo{display:block;margin:10px auto;width:180px;}
 
+.holder-bg{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  opacity:0.25;
+  z-index:-1;
+}
+.holder{
+  position:absolute;
+  width:60px;
+  height:auto;
+}
+
+h1{
+  text-align:center;
+  font-family:'Baloo 2',cursive;
+  margin-top:5px;
+}
+
+.team-box{
+  background:white;
+  padding:20px;
+  margin:20px auto;
+  width:90%;
+  border-radius:14px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.08);
+  position:relative;
+}
+.team-box:before{
+  content:"";
+  position:absolute;
+  left:-12px;
+  top:20px;
+  width:10px;
+  height:70%;
+  background:#a3c9ff;
+  border-radius:10px;
+}
+
+button{
+  padding:6px 14px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  color:white;
+  font-size:15px;
+}
+.add-btn{background:#4b7bff;}
+.add-btn:hover{background:#265dff;}
+.minus-btn{background:#ff6b6b;}
+.minus-btn:hover{background:#e05252;}
+
+#resetBtn{
+  background:#ff4d4d;
+  padding:10px 20px;
+  border-radius:10px;
+  float:right;
+  margin:10px 5% 20px 0;
+}
+
+.log-toggle{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  background:#ffb66e;
+  padding:12px 18px;
+  border-radius:50px;
+  cursor:pointer;
+  color:black;
+  font-weight:bold;
+  box-shadow:0 4px 8px rgba(0,0,0,0.2);
+}
+
+.log-panel{
+  position:fixed;
+  right:0;
+  top:0;
+  width:350px;
+  height:100%;
+  background:#fff8e6;
+  box-shadow:-4px 0 12px rgba(0,0,0,0.15);
+  transform:translateX(100%);
+  transition:0.4s;
+  padding:20px;
+  overflow-y:auto;
+}
+.log-item{
+  background:white;
+  margin:10px 0;
+  padding:10px;
+  border-radius:10px;
+  box-shadow:0 3px 6px rgba(0,0,0,0.1);
+}
+.log-panel.open{transform:translateX(0);}
+</style>
 </head>
 
 <body>
-
 <img src="logo.jpg" class="logo">
-
 <h1>카르텔 볼더링 대관파티 – 실시간 점수판</h1>
-
 <button id="resetBtn" onclick="resetScores()">전체 점수 초기화</button>
+
+<div id="holderBackground" class="holder-bg"></div>
 
 <div id="teams"></div>
 
-<hr>
-<h2>전체 팀 점수</h2>
-
-<table>
-    <thead>
-        <tr><th>팀</th><th>점수</th></tr>
-    </thead>
-    <tbody id="summary"></tbody>
+<h2 style="text-align:center;margin-top:40px;">전체 팀 점수</h2>
+<table style="width:90%;margin:auto;background:white;border-radius:12px;overflow:hidden;">
+<thead>
+<tr style="background:#dce6ff;"><th>팀</th><th>점수</th></tr>
+</thead>
+<tbody id="summary"></tbody>
 </table>
+
+<div class="log-toggle" onclick="toggleLog()">LOG</div>
+
+<div class="log-panel" id="logPanel">
+  <h2>입력 로그</h2>
+  <div id="logList"></div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
+// Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDSsqSSH_WSTIG17zgfsJiKpx4TtsiLPGQ",
   authDomain: "cartelscore-a2473.firebaseapp.com",
@@ -109,86 +151,114 @@ const firebaseConfig = {
   appId: "1:645482608954:web:0ef0b32cbd9cf135207803",
   measurementId: "G-ER8E8EHH5Q"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-const scoreMap = {
-    "노랑": 5,
-    "초록": 10,
-    "하늘": 20,
-    "파랑": 40,
-    "보라": 60,
-    "회색": 90,
-    "갈색": 120,
-    "검은색": 200
-};
+// SVG 홀더들
+const holderSVG = [
+`<svg width="60" height="40" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><path d="M10 30 Q5 15 20 10 Q40 5 50 20 Q45 35 25 35 Z" fill="#b98cff" stroke="black" stroke-width="3"/></svg>`,
+`<svg width="60" height="40" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><path d="M8 28 Q5 15 18 12 Q35 10 48 18 Q50 30 30 33 Z" fill="#ffe57f" stroke="black" stroke-width="3"/></svg>`,
+`<svg width="60" height="40" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><path d="M12 30 Q5 18 15 8 Q35 5 48 15 Q45 32 28 34 Z" fill="#8fe27e" stroke="black" stroke-width="3"/></svg>`,
+`<svg width="60" height="40" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><path d="M10 26 Q12 10 30 8 Q48 10 46 26 Q35 34 20 32 Z" fill="#6ea8ff" stroke="black" stroke-width="3"/></svg>`
+];
 
-const levels = Object.keys(scoreMap);
+function placeHolders(){
+  const bg=document.getElementById("holderBackground");
+  for(let i=0;i<15;i++){
+    const div=document.createElement("div");
+    div.className="holder";
+    div.innerHTML=holderSVG[Math.floor(Math.random()*holderSVG.length)];
+    div.style.top=Math.random()*90+"%";
+    div.style.left=Math.random()*90+"%";
+    div.style.transform=`rotate(${Math.random()*360}deg)`;
+    bg.appendChild(div);
+  }
+}
+placeHolders();
 
-const teamList = ["A", "B", "C", "D", "E", "F"];
-const container = document.getElementById("teams");
+// 점수 시스템
+const scoreMap={"노랑":5,"초록":10,"하늘":20,"파랑":40,"보라":60,"회색":90,"갈색":120,"검은색":200};
+const levels=Object.keys(scoreMap);
+const teams=["A","B","C","D","E","F"];
 
-teamList.forEach(team => {
-    const box = document.createElement("div");
-    box.className = "team-box";
-    box.innerHTML = `
-        <h2>${team}팀</h2>
-        <label>레벨 선택: 
-            <select id="${team}_level">
-                ${levels.map(l => `<option value="${l}">${l}</option>`).join("")}
-            </select>
-        </label>
-        <button onclick="addScore('${team}')">점수 추가</button>
-        <button class="minus" onclick="minusScore('${team}')">점수 차감</button>
-    `;
-    container.appendChild(box);
+const container=document.getElementById("teams");
+
+teams.forEach(team=>{
+  const box=document.createElement("div");
+  box.className="team-box";
+  box.innerHTML=`
+    <h2>${team}팀</h2>
+    <select id="${team}_level">
+      ${levels.map(l=>`<option value="${l}">${l}</option>`).join("")}
+    </select>
+    <button class="add-btn" onclick="addScore('${team}')">점수 추가</button>
+    <button class="minus-btn" onclick="minusScore('${team}')">점수 차감</button>
+  `;
+  container.appendChild(box);
 });
 
-function addScore(team) {
-    const level = document.getElementById(team + "_level").value;
-    const addPoint = scoreMap[level];
-
-    db.ref("scores/" + team).once("value").then(snapshot => {
-        const current = snapshot.val() || 0;
-        db.ref("scores/" + team).set(current + addPoint);
-    });
+function addLog(team, action, level, point){
+  const logRef=db.ref("logs").push();
+  logRef.set({
+    team, action, level, point,
+    time:new Date().toLocaleString()
+  });
 }
 
-function minusScore(team) {
-    const level = document.getElementById(team + "_level").value;
-    const minusPoint = scoreMap[level];
-
-    db.ref("scores/" + team).once("value").then(snapshot => {
-        const current = snapshot.val() || 0;
-        let updated = current - minusPoint;
-        if (updated < 0) updated = 0;
-        db.ref("scores/" + team).set(updated);
-    });
+function addScore(team){
+  const level=document.getElementById(team+"_level").value;
+  const point=scoreMap[level];
+  db.ref("scores/"+team).once("value").then(s=>{
+    const now=s.val()||0;
+    db.ref("scores/"+team).set(now+point);
+    addLog(team,"add",level,point);
+  });
 }
 
-function resetScores() {
-    const password = prompt("관리자 비밀번호를 입력하세요:");
-    if (password !== "cartel123") {
-        alert("비밀번호가 틀렸습니다.");
-        return;
-    }
-    teamList.forEach(team => {
-        db.ref("scores/" + team).set(0);
-    });
-    alert("모든 팀 점수가 초기화되었습니다!");
+function minusScore(team){
+  const level=document.getElementById(team+"_level").value;
+  const point=scoreMap[level];
+  db.ref("scores/"+team).once("value").then(s=>{
+    const now=s.val()||0;
+    const up=Math.max(0, now-point);
+    db.ref("scores/"+team).set(up);
+    addLog(team,"minus",level,point);
+  });
 }
 
-db.ref("scores").on("value", snap => {
-    const data = snap.val() || {};
-    const sumTbody = document.getElementById("summary");
-    sumTbody.innerHTML = "";
+function resetScores(){
+  const pw=prompt("관리자 비밀번호 입력:");
+  if(pw!=="cartel123") return alert("비밀번호 틀림");
+  teams.forEach(t=>db.ref("scores/"+t).set(0));
+  db.ref("logs").remove();
+  alert("초기화 완료");
+}
 
-    teamList.forEach(team => {
-        const score = data[team] || 0;
-        sumTbody.innerHTML += `<tr><td>${team}</td><td>${score}</td></tr>`;
-    });
+db.ref("scores").on("value",snap=>{
+  const tbody=document.getElementById("summary");
+  tbody.innerHTML="";
+  teams.forEach(t=>{
+    const v=snap.val()?.[t]||0;
+    tbody.innerHTML+=`<tr><td>${t}</td><td>${v}</td></tr>`;
+  });
 });
+
+db.ref("logs").on("value",snap=>{
+  const list=document.getElementById("logList");
+  list.innerHTML="";
+  const logs=snap.val()||{};
+  Object.values(logs).reverse().forEach(l=>{
+    list.innerHTML+=`
+      <div class="log-item">
+        <b>${l.team}팀</b> — ${l.action==="add"?"<span style='color:green'>+":"<span style='color:red'>-"}${l.point}</span>  
+        <br>${l.level} / <small>${l.time}</small>
+      </div>`;
+  });
+});
+
+function toggleLog(){
+  document.getElementById("logPanel").classList.toggle("open");
+}
 </script>
 
 </body>
