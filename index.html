@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>카르텔 볼더링 점수판</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<img src="logo.jpg" class="logo">
+<h1>카르텔 볼더링 대관파티 – 실시간 점수판</h1>
+
+<button id="resetLogBtn">로그 초기화</button>
+<button id="resetBtn">전체 점수 초기화</button>
+
+<div id="holderBackground" class="holder-bg"></div>
+<div id="teams"></div>
+
+<table class="score-table">
+<thead><tr><th>팀</th><th>총점</th></tr></thead>
+<tbody id="summary"></tbody>
+</table>
+
+<div class="log-toggle" id="logToggle">LOG</div>
+
+<div class="log-panel" id="logPanel">
+<button class="log-close" id="logClose">닫기</button>
+<h2>입력 로그</h2>
+<div id="logList"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="score.js"></script>
+
+</body>
+</html>
