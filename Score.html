@@ -5,13 +5,19 @@
 <title>카르텔 볼더링 대관파티 – 실시간 점수판</title>
 <style>
     body { 
-        font-family: Arial, sans-serif; 
+        font-family: 'Noto Sans KR', sans-serif; 
         margin: 20px; 
         background: #eef4ff;
     }
     h1 {
         text-align: center;
-        margin-bottom: 40px;
+        margin-bottom: 20px;
+        font-family: 'Baloo 2', cursive;
+    }
+    .logo {
+        display:block;
+        margin:0 auto 20px auto;
+        width:180px;
     }
     table { 
         width: 100%; 
@@ -27,22 +33,29 @@
     .team-box { 
         background: #ffffff; 
         padding: 15px; 
-        border-radius: 8px; 
+        border-radius: 12px; 
         margin-bottom: 20px; 
         border: 1px solid #ddd;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        box-shadow: 0 3px 6px rgba(0,0,0,0.08);
     }
     button {
         margin-left: 10px;
-        padding: 5px 10px;
+        padding: 6px 12px;
         border: none;
         background: #4b7bff;
         color: white;
-        border-radius: 4px;
+        border-radius: 6px;
         cursor: pointer;
+        font-size: 14px;
     }
     button:hover {
         background: #365cd4;
+    }
+    .minus {
+        background: #ff6b6b;
+    }
+    .minus:hover {
+        background: #d64545;
     }
     #resetBtn {
         background:#ff4d4d;
@@ -53,11 +66,18 @@
         font-size:16px;
         cursor:pointer;
         margin-bottom:20px;
+        display:block;
+        margin-left:auto;
     }
 </style>
+
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
+
+<img src="logo.jpg" class="logo">
 
 <h1>카르텔 볼더링 대관파티 – 실시간 점수판</h1>
 
@@ -119,7 +139,8 @@ teamList.forEach(team => {
                 ${levels.map(l => `<option value="${l}">${l}</option>`).join("")}
             </select>
         </label>
-        <button onclick="addScore('${team}')">저장</button>
+        <button onclick="addScore('${team}')">점수 추가</button>
+        <button class="minus" onclick="minusScore('${team}')">점수 차감</button>
     `;
     container.appendChild(box);
 });
@@ -131,6 +152,18 @@ function addScore(team) {
     db.ref("scores/" + team).once("value").then(snapshot => {
         const current = snapshot.val() || 0;
         db.ref("scores/" + team).set(current + addPoint);
+    });
+}
+
+function minusScore(team) {
+    const level = document.getElementById(team + "_level").value;
+    const minusPoint = scoreMap[level];
+
+    db.ref("scores/" + team).once("value").then(snapshot => {
+        const current = snapshot.val() || 0;
+        let updated = current - minusPoint;
+        if (updated < 0) updated = 0;
+        db.ref("scores/" + team).set(updated);
     });
 }
 
