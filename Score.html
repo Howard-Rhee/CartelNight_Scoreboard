@@ -3,488 +3,221 @@
 <head>
 <meta charset="UTF-8">
 <title>카르텔 볼더링 점수판</title>
-
-<!-- 폰트 -->
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-
 <style>
-/* ===============================
-   ★ 종이 질감 배경 (CSS Noise)
-   =============================== */
 body{
-  margin:0;
-  padding:0;
+  margin:0;padding:0;
   font-family:'Noto Sans KR',sans-serif;
-  background:#f2ebd9;
-  position:relative;
-  overflow-x:hidden;
+  background:#f2ebd9;overflow-x:hidden;position:relative;
 }
-
 body:before{
-  content:"";
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background-image:
-      radial-gradient(rgba(0,0,0,0.045) 1px, transparent 1px),
-      radial-gradient(rgba(0,0,0,0.02) 1px, transparent 1px);
-  background-size:4px 4px, 6px 6px;
-  opacity:0.45;
-  pointer-events:none;
-  z-index:0;
+  content:"";position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:radial-gradient(rgba(0,0,0,0.045)1px,transparent 1px),
+                    radial-gradient(rgba(0,0,0,0.02)1px,transparent 1px);
+  background-size:4px 4px,6px 6px;opacity:.45;pointer-events:none;z-index:0;
 }
-
-/* ===============================
-   ★ 상단 로고 & 타이틀
-   =============================== */
-.logo{
-  width:160px;
-  display:block;
-  margin:40px auto 5px auto;
-  z-index:2;
-  position:relative;
-}
-
-h1{
-  text-align:center;
-  font-size:32px;
-  margin-top:20px;
-  margin-bottom:30px;
-  font-family:'Baloo 2', cursive;
-  color:#3a2e1f;
-  z-index:2;
-  position:relative;
-}
-
-/* ===============================
-   ★ 랜덤 홀더 SVG 배경
-   =============================== */
-.holder-bg{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  z-index:1;
-  pointer-events:none;
-}
-.holder{
-  position:absolute;
-  width:70px;
-  opacity:0.85;
-}
-
-/* ===============================
-   ★ 점수 초기화 버튼
-   =============================== */
-#resetBtn{
-  position:fixed;
-  top:18px;
-  right:24px;
-  padding:12px 18px;
-  background:#ff4d4d;
-  border:none;
-  border-radius:14px;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-  z-index:10;
+.logo{width:160px;display:block;margin:40px auto 5px;z-index:2;position:relative;}
+h1{text-align:center;font-size:32px;margin:20px 0 30px;font-family:'Baloo 2';color:#3a2e1f;z-index:2;position:relative;}
+#resetBtn,#resetLogBtn{
+  position:fixed;top:18px;padding:12px 18px;border:none;border-radius:14px;
+  color:white;font-weight:bold;cursor:pointer;z-index:10;
   box-shadow:2px 4px 10px rgba(0,0,0,0.25);
 }
-#resetBtn:hover{
-  background:#d63b3b;
-}
-
-/* ===============================
-   ★ 팀 카드 (베이지 종이 디자인)
-   =============================== */
+#resetBtn{right:24px;background:#ff4d4d;}
+#resetLogBtn{right:160px;background:#ff8f2f;}
+.holder-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;}
+.holder{position:absolute;width:70px;opacity:.85;}
 .team-box{
-  background:#f7f1df;
-  width:86%;
-  margin:25px auto;
-  padding:20px;
-  border-radius:22px;
-  box-shadow:2px 4px 10px rgba(0,0,0,0.25);
-  position:relative;
-  z-index:2;
+  background:#f7f1df;width:86%;margin:25px auto;padding:20px;
+  border-radius:22px;box-shadow:2px 4px 10px rgba(0,0,0,.25);position:relative;z-index:2;
 }
-
 .team-box:before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  border-radius:22px;
-  opacity:0.3;
-  background:
-     radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px) repeat;
-  background-size:4px 4px;
+  content:"";position:absolute;top:0;left:0;width:100%;height:100%;
+  border-radius:22px;opacity:.3;
+  background:radial-gradient(rgba(0,0,0,0.06)1px,transparent 1px);background-size:4px 4px;
 }
-
-/* ===============================
-   ★ 버튼 스타일
-   =============================== */
-button{
-  padding:10px 14px;
-  border:none;
-  border-radius:10px;
-  color:white;
-  cursor:pointer;
-  font-size:15px;
-  margin-left:6px;
-}
-
-.add-btn{background:#4b7bff;}
-.add-btn:hover{background:#2f5fff;}
-
-.minus-btn{background:#ff6b6b;}
-.minus-btn:hover{background:#d94343;}
-
-/* ===============================
-   ★ 총점 테이블
-   =============================== */
+button{padding:10px 14px;border:none;border-radius:10px;color:white;cursor:pointer;font-size:15px;margin-left:6px;}
+.add-btn{background:#4b7bff;} .add-btn:hover{background:#2f5fff;}
+.minus-btn{background:#ff6b6b;} .minus-btn:hover{background:#d94343;}
 .score-table{
-  width:86%;
-  margin:40px auto;
-  background:#f7f1df;
-  border-radius:18px;
-  box-shadow:2px 4px 10px rgba(0,0,0,0.25);
-  overflow:hidden;
-  z-index:2;
-  position:relative;
+  width:86%;margin:40px auto;background:#f7f1df;border-radius:18px;
+  box-shadow:2px 4px 10px rgba(0,0,0,.25);overflow:hidden;z-index:2;position:relative;
 }
-
-.score-table th, .score-table td{
-  padding:15px;
-  font-size:18px;
-  border-bottom:1px solid #e2d8bf;
-  text-align:center;
-}
-.score-table th{
-  font-size:20px;
-  background:#e5d9b6;
-  font-weight:bold;
-  color:#3a2e1f;
-}
-
-/* ===============================
-   ★ LOG 버튼 (아래 슬라이드)
-   =============================== */
+.score-table th,.score-table td{padding:15px;font-size:18px;border-bottom:1px solid #e2d8bf;text-align:center;}
+.score-table th{font-size:20px;background:#e5d9b6;font-weight:bold;color:#3a2e1f;}
 .log-toggle{
-  position:fixed;
-  bottom:25px;
-  left:50%;
-  transform:translateX(-50%);
-  padding:12px 22px;
-  background:#ffb66e;
-  border-radius:40px;
-  cursor:pointer;
-  font-weight:bold;
-  z-index:10;
-  box-shadow:0 3px 8px rgba(0,0,0,0.25);
-  font-size:17px;
+  position:fixed;bottom:25px;left:50%;transform:translateX(-50%);
+  padding:12px 22px;background:#ffb66e;border-radius:40px;cursor:pointer;
+  font-weight:bold;z-index:10;box-shadow:0 3px 8px rgba(0,0,0,.25);font-size:17px;
 }
-
-/* ===============================
-   ★ LOG 패널
-   =============================== */
 .log-panel{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  height:55%;
-  background:#f7e9ca;
-  border-radius:24px 24px 0 0;
-  transform:translateY(100%);
-  transition:0.45s;
-  padding:25px;
-  overflow-y:auto;
-  box-shadow:0 -4px 10px rgba(0,0,0,0.25);
-  z-index:20;
+  position:fixed;bottom:0;left:0;width:100%;height:55%;background:#f7e9ca;
+  border-radius:24px 24px 0 0;transform:translateY(100%);transition:.45s;
+  padding:25px;overflow-y:auto;box-shadow:0 -4px 10px rgba(0,0,0,.25);z-index:20;
 }
-
-.log-panel.open{
-  transform:translateY(0%);
-}
-
+.log-panel.open{transform:translateY(0);}
 .log-close{
-  position:absolute;
-  right:20px;
-  top:18px;
-  background:#ff6b6b;
-  color:white;
-  border:none;
-  padding:6px 12px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:bold;
+  position:absolute;right:20px;top:18px;background:#ff6b6b;color:white;
+  border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;
 }
-
-/* 로그 아이템 */
 .log-item{
-  background:#fff;
-  padding:12px;
-  margin:12px 0;
-  border-radius:14px;
-  box-shadow:2px 4px 8px rgba(0,0,0,0.2);
-  font-size:16px;
+  background:#fff;padding:12px;margin:12px 0;border-radius:14px;
+  box-shadow:2px 4px 8px rgba(0,0,0,.2);font-size:16px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 로고 -->
 <img src="logo.jpg" class="logo">
-
 <h1>카르텔 볼더링 대관파티 – 실시간 점수판</h1>
 
+<button id="resetLogBtn" onclick="resetLogs()">로그 초기화</button>
 <button id="resetBtn" onclick="resetScores()">전체 점수 초기화</button>
 
-<!-- 랜덤 홀더 배경 -->
 <div id="holderBackground" class="holder-bg"></div>
-
-<!-- 팀 카드가 들어갈 곳 -->
 <div id="teams"></div>
 
-<!-- 총점 테이블 -->
 <table class="score-table">
-<thead>
-<tr><th>팀</th><th>총점</th></tr>
-</thead>
+<thead><tr><th>팀</th><th>총점</th></tr></thead>
 <tbody id="summary"></tbody>
 </table>
 
-<!-- LOG 버튼 -->
 <div class="log-toggle" onclick="toggleLog()">LOG</div>
 
-<!-- LOG 패널 -->
 <div class="log-panel" id="logPanel">
   <button class="log-close" onclick="toggleLog()">닫기</button>
   <h2>입력 로그</h2>
   <div id="logList"></div>
 </div>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
-// ===============================
-// ★ Firebase 초기화
-// ===============================
-const firebaseConfig = {
-  apiKey: "AIzaSyDSsqSSH_WSTIG17zgfsJiKpx4TtsiLPGQ",
-  authDomain: "cartelscore-a2473.firebaseapp.com",
-  databaseURL: "https://cartelscore-a2473-default-rtdb.firebaseio.com",
-  projectId: "cartelscore-a2473",
-  storageBucket: "cartelscore-a2473.firebasestorage.app",
-  messagingSenderId: "645482608954",
-  appId: "1:645482608954:web:0ef0b32cbd9cf135207803",
+const firebaseConfig={
+  apiKey:"AIzaSyDSsqSSH_WSTIG17zgfsJiKpx4TtsiLPGQ",
+  authDomain:"cartelscore-a2473.firebaseapp.com",
+  databaseURL:"https://cartelscore-a2473-default-rtdb.firebaseio.com",
+  projectId:"cartelscore-a2473",
+  storageBucket:"cartelscore-a2473.firebasestorage.app",
+  messagingSenderId:"645482608954",
+  appId:"1:645482608954:web:0ef0b32cbd9cf135207803"
 };
 firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
 
-const db = firebase.database();
-
-// ===============================
-// ★ SVG 홀더 4종
-// ===============================
-const holders = [
+const holders=[
 `<svg width="70" height="45" viewBox="0 0 60 40"><path d="M10 30 Q5 15 20 10 Q40 5 50 20 Q45 35 25 35 Z" fill="#b98cff" stroke="black" stroke-width="3"/></svg>`,
 `<svg width="70" height="45" viewBox="0 0 60 40"><path d="M8 28 Q5 15 18 12 Q35 10 48 18 Q50 30 30 33 Z" fill="#ffe57f" stroke="black" stroke-width="3"/></svg>`,
 `<svg width="70" height="45" viewBox="0 0 60 40"><path d="M12 30 Q5 18 15 8 Q35 5 48 15 Q45 32 28 34 Z" fill="#8fe27e" stroke="black" stroke-width="3"/></svg>`,
 `<svg width="70" height="45" viewBox="0 0 60 40"><path d="M10 26 Q12 10 30 8 Q48 10 46 26 Q35 34 20 32 Z" fill="#6ea8ff" stroke="black" stroke-width="3"/></svg>`
 ];
 
-// ===============================
-// ★ 랜덤 홀더 배경 생성
-// ===============================
 function placeHolders(){
-  const bg = document.getElementById("holderBackground");
-
+  const bg=document.getElementById("holderBackground");
   for(let i=0;i<26;i++){
-    const h = document.createElement("div");
-    h.className = "holder";
-    h.innerHTML = holders[Math.floor(Math.random()*holders.length)];
-    h.style.left = Math.random()*95 + "%";
-    h.style.top = Math.random()*95 + "%";
-    h.style.transform =
-        `rotate(${Math.random()*360}deg) scale(${0.6 + Math.random()*0.7})`;
+    const h=document.createElement("div");
+    h.className="holder";
+    h.innerHTML=holders[Math.floor(Math.random()*holders.length)];
+    h.style.left=Math.random()*95+"%";
+    h.style.top=Math.random()*95+"%";
+    h.style.transform=`rotate(${Math.random()*360}deg) scale(${0.6+Math.random()*0.7})`;
     bg.appendChild(h);
   }
 }
 placeHolders();
-</script>
 
-<script>
-// ===============================
-// ★ 점수 매핑표
-// ===============================
-const scoreMap = {
-  "노랑": 5,
-  "초록": 10,
-  "하늘": 20,
-  "파랑": 40,
-  "보라": 60,
-  "회색": 90,
-  "갈색": 120,
-  "검은색": 200
-};
+const scoreMap={"노랑":5,"초록":10,"하늘":20,"파랑":40,"보라":60,"회색":90,"갈색":120,"검은색":200};
+const levels=Object.keys(scoreMap);
+const teams=["A","B","C","D","E","F"];
 
-const levels = Object.keys(scoreMap);
-const teams = ["A","B","C","D","E","F"];
+const teamsContainer=document.getElementById("teams");
 
-const teamsContainer = document.getElementById("teams");
-
-// ===============================
-// ★ 팀 카드 자동 생성
-// ===============================
 teams.forEach(team=>{
-  const box = document.createElement("div");
-  box.className = "team-box";
-
-  box.innerHTML = `
+  const box=document.createElement("div");
+  box.className="team-box";
+  box.innerHTML=`
     <h2>${team}팀</h2>
-
     <select id="${team}_level" style="font-size:16px;padding:6px 10px;border-radius:8px;">
-      ${levels.map(l => `<option value="${l}">${l}</option>`).join("")}
+      ${levels.map(l=>`<option value="${l}">${l}</option>`).join("")}
     </select>
-
     <button class="add-btn" onclick="addScore('${team}')">점수 추가</button>
     <button class="minus-btn" onclick="minusScore('${team}')">점수 차감</button>
   `;
-
   teamsContainer.appendChild(box);
 });
 
-// ===============================
-// ★ 점수 추가 함수
-// ===============================
 function addScore(team){
-  const lv = document.getElementById(team + "_level").value;
-  const p = scoreMap[lv];
-
-  db.ref("scores/" + team).once("value").then(snap=>{
-    const current = snap.val() || 0;
-    db.ref("scores/" + team).set(current + p);
-
-    addLog(team, "add", lv, p);
+  const lv=document.getElementById(team+"_level").value;
+  const p=scoreMap[lv];
+  db.ref("scores/"+team).once("value").then(s=>{
+    const v=s.val()||0;
+    db.ref("scores/"+team).set(v+p);
+    addLog(team,"add",lv,p);
   });
 }
 
-// ===============================
-// ★ 점수 차감 함수
-// ===============================
 function minusScore(team){
-  const lv = document.getElementById(team + "_level").value;
-  const p = scoreMap[lv];
-
-  db.ref("scores/" + team).once("value").then(snap=>{
-    const current = snap.val() || 0;
-    let updated = current - p;
-    if(updated < 0) updated = 0;
-
-    db.ref("scores/" + team).set(updated);
-
-    addLog(team, "minus", lv, p);
+  const lv=document.getElementById(team+"_level").value;
+  const p=scoreMap[lv];
+  db.ref("scores/"+team).once("value").then(s=>{
+    let v=s.val()||0;
+    v=Math.max(0,v-p);
+    db.ref("scores/"+team).set(v);
+    addLog(team,"minus",lv,p);
   });
 }
 
-// ===============================
-// ★ 총점 테이블 실시간 업데이트
-// ===============================
-db.ref("scores").on("value", snap=>{
-  const tbody = document.getElementById("summary");
-  tbody.innerHTML = "";
-
-  const scores = snap.val() || {};
-
-  teams.forEach(team=>{
-    const score = scores[team] || 0;
-
-    tbody.innerHTML += `
-      <tr>
-        <td style="font-weight:bold;">${team}</td>
-        <td>${score}</td>
-      </tr>
-    `;
+db.ref("scores").on("value",snap=>{
+  const tbody=document.getElementById("summary");
+  tbody.innerHTML="";
+  const sc=snap.val()||{};
+  teams.forEach(t=>{
+    tbody.innerHTML += `<tr><td><b>${t}</b></td><td>${sc[t]||0}</td></tr>`;
   });
 });
 
-// ===============================
-// ★ 전체 점수 초기화 (관리자 비번)
-// ===============================
 function resetScores(){
-  const pw = prompt("관리자 비밀번호를 입력하세요:");
-  if(pw !== "cartel123"){
-    alert("비밀번호가 틀렸습니다!");
-    return;
-  }
-
-  teams.forEach(team=>{
-    db.ref("scores/" + team).set(0);
-  });
-
+  const pw=prompt("관리자 비밀번호:");
+  if(pw!=="cartel123") return alert("비밀번호 틀림!");
+  teams.forEach(t=>db.ref("scores/"+t).set(0));
   db.ref("logs").remove();
-
-  alert("모든 점수와 로그가 초기화되었습니다!");
+  alert("점수/로그 초기화 완료!");
 }
-</script>
 
-<script>
-// ===============================
-// ★ 로그 저장 함수
-// ===============================
-function addLog(team, action, level, point){
+function resetLogs(){
+  const pw=prompt("로그 초기화 비밀번호:");
+  if(pw!=="cartel123") return alert("틀림!");
+  db.ref("logs").remove();
+  alert("로그만 초기화 완료!");
+}
+
+function addLog(team,action,level,point){
   db.ref("logs").push({
-    team: team,
-    action: action, // add or minus
-    level: level,
-    point: point,
-    time: new Date().toLocaleTimeString("ko-KR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit"
-    })
+    team,action,level,point,
+    time:new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit"})
   });
 }
 
-// ===============================
-// ★ LOG 패널 열기/닫기
-// ===============================
 function toggleLog(){
   document.getElementById("logPanel").classList.toggle("open");
 }
 
-// ===============================
-// ★ LOG 리스트 실시간 반영
-// ===============================
-db.ref("logs").on("value", snap=>{
-  const list = document.getElementById("logList");
-  list.innerHTML = "";
-
-  const logs = snap.val() || {};
-
-  // 최신 로그 위로
-  const items = Object.values(logs).reverse();
-
-  items.forEach(l=>{
-    const sign = l.action === "add"
-      ? `<span style="color:green;font-weight:bold;">+${l.point}</span>`
-      : `<span style="color:red;font-weight:bold;">-${l.point}</span>`;
-
-    list.innerHTML += `
+db.ref("logs").on("value",snap=>{
+  const list=document.getElementById("logList");
+  list.innerHTML="";
+  const logs=snap.val()||{};
+  Object.values(logs).reverse().forEach(l=>{
+    const sign=l.action==="add"?
+      `<span style='color:green;font-weight:bold;'>+${l.point}</span>`:
+      `<span style='color:red;font-weight:bold;'>-${l.point}</span>`;
+    list.innerHTML+=`
       <div class="log-item">
-        <b>${l.team}팀</b> — ${sign}  
-        <br>${l.level}
-        <br><small>${l.time}</small>
-      </div>
-    `;
+        <b>${l.team}팀</b> — ${sign}<br>
+        ${l.level}<br>
+        <small>${l.time}</small>
+      </div>`;
   });
 });
 </script>
